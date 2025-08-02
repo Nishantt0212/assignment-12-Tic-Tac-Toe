@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic Tac Toe </title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f7f7f7;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 5px;
+      margin: 15px auto;
+    }
+
+    .box {
+      height: 100px;
+      width: 100px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .box:hover {
+      background: #f0f8ff;
+    }
+
+    .winner-text {
+      font-size: 28px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .reset {
+      background: #007bff;
+      color: white;
+      padding: 10px 20px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .reset:hover {
+      background: #0056b3;
+    }
+
+    .highlight {
+      background: #90ee90 !important; /* Green for winning line */
+    }
+
+    .scoreboard {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="winner-text">Tic Tac Toe</div>
+    <div class="scoreboard">
+      X Wins: <span id="xScore">0</span> | O Wins: <span id="oScore">0</span>
+    </div>
+
+    <div class="board">
+      <div class="box" id="1"></div>
+      <div class="box" id="2"></div>
+      <div class="box" id="3"></div>
+      <div class="box" id="4"></div>
+      <div class="box" id="5"></div>
+      <div class="box" id="6"></div>
+      <div class="box" id="7"></div>
+      <div class="box" id="8"></div>
+      <div class="box" id="9"></div>
+    </div>
+
+    <button class="reset">Reset</button>
+  </div>
+
+  <script>
+    const boxes = document.querySelectorAll('.box');
+    const winnerText = document.querySelector('.winner-text');
+    const resetBtn = document.querySelector('.reset');
+    const xScoreEl = document.getElementById('xScore');
+    const oScoreEl = document.getElementById('oScore');
+
+    let currentPlayer = 'X';
+    let gameActive = true;
+    let xScore = 0;
+    let oScore = 0;
+    let moves = 0;
+
+    const winningCombos = [
+      [1, 2, 3],
+      [4, 5, 6],
+      [7, 8, 9],
+      [1, 4, 7],
+      [2, 5, 8],
+      [3, 6, 9],
+      [1, 5, 9],
+      [3, 5, 7]
+    ];
+
+    function checkWinner() {
+      for (let combo of winningCombos) {
+        let [a, b, c] = combo;
+        let boxA = document.getElementById(a).innerText;
+        let boxB = document.getElementById(b).innerText;
+        let boxC = document.getElementById(c).innerText;
+
+        if (boxA && boxA === boxB && boxA === boxC) {
+          gameActive = false;
+          winnerText.innerText = `${boxA} Wins! 🎉`;
+          highlightBoxes(a, b, c);
+          updateScore(boxA);
+          return;
+        }
+      }
+
+      if (moves === 9 && gameActive) {
+        winnerText.innerText = "It's a Draw! 🤝";
+        gameActive = false;
+      }
+    }
+
+    function highlightBoxes(a, b, c) {
+      document.getElementById(a).classList.add('highlight');
+      document.getElementById(b).classList.add('highlight');
+      document.getElementById(c).classList.add('highlight');
+    }
+
+    function updateScore(winner) {
+      if (winner === 'X') {
+        xScore++;
+        xScoreEl.innerText = xScore;
+      } else {
+        oScore++;
+        oScoreEl.innerText = oScore;
+      }
+    }
+
+    function resetBoard() {
+      boxes.forEach(box => {
+        box.innerText = '';
+        box.classList.remove('highlight');
+      });
+      currentPlayer = 'X';
+      gameActive = true;
+      moves = 0;
+      winnerText.innerText = "Tic Tac Toe";
+    }
+
+    boxes.forEach(box => {
+      box.addEventListener('click', () => {
+        if (!gameActive || box.innerText !== '') return;
+        box.innerText = currentPlayer;
+        moves++;
+        checkWinner();
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+      });
+    });
+
+    resetBtn.addEventListener('click', resetBoard);
+  </script>
+
+</body>
+</html>
